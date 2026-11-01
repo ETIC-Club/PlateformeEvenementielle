@@ -19,7 +19,6 @@
   "dependencies": {
     "@vercel/blob": "^2.8.2",
     "better-auth": "^1.7.14",
-    "cn": "^0.5.1",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.3",
     "pg": "^8.23.1",
