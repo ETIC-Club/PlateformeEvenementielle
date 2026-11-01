@@ -34,3 +34,18 @@ export function parseQuery<S extends z.ZodType>(request: NextRequest, schema: S)
 export function parseParams<S extends z.ZodType>(params: unknown, schema: S): z.output<S> {
   return parseWith(schema, params);
 }
+
+/** Récupère et valide un fichier d'un envoi multipart (`<input type="file" name="file">`). */
+export async function parseFormFile<S extends z.ZodType>(
+  request: NextRequest,
+  field: string,
+  schema: S,
+): Promise<z.output<S>> {
+  let form: FormData;
+  try {
+    form = await request.formData();
+  } catch {
+    throw new ValidationError("Envoi multipart/form-data attendu");
+  }
+  return parseWith(schema, form.get(field));
+}

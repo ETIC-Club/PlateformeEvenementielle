@@ -10,6 +10,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import { SCAN_SESSION_TYPES } from "../lib/constants";
 import { ROLES } from "../lib/roles";
 import { generateQrToken } from "../lib/tokens";
 
@@ -31,8 +32,6 @@ const updatedAt = () =>
 
 export const userRoleEnum = pgEnum("user_role", ROLES);
 
-export const SCAN_SESSION_TYPES = ["entrance", "meal", "workshop", "vip", "other"] as const;
-export type ScanSessionType = (typeof SCAN_SESSION_TYPES)[number];
 export const scanSessionTypeEnum = pgEnum("scan_session_type", SCAN_SESSION_TYPES);
 
 // ---------------------------------------------------------------------------

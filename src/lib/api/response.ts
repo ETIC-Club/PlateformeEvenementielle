@@ -34,3 +34,18 @@ export function noContent() {
 export function failure(status: number, error: ApiFailure["error"]) {
   return NextResponse.json<ApiFailure>({ ok: false, error }, { status });
 }
+
+/** Téléchargement d'un fichier généré (PNG, PDF, ZIP, CSV, XLSX). Les erreurs restent en JSON. */
+export function fileResponse(
+  body: Uint8Array<ArrayBuffer> | string,
+  options: { contentType: string; filename: string; inline?: boolean },
+) {
+  const disposition = options.inline ? "inline" : "attachment";
+  return new NextResponse(body, {
+    headers: {
+      "Content-Type": options.contentType,
+      "Content-Disposition": `${disposition}; filename="${options.filename}"`,
+      "Cache-Control": "private, no-store",
+    },
+  });
+}

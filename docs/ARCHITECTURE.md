@@ -38,6 +38,8 @@ Règles clés :
 - **Une feature n'importe jamais les `queries.ts` ni les `components/` d'une autre feature.** Si `scan` a besoin de données de `participants`, il appelle `participants/service.ts`.
 - `@/db/client` n'est importé que par `queries.ts` (et `src/db`, `src/lib/auth`). **ESLint bloque** les autres cas.
 - `service.ts` n'importe pas `next/*` (ESLint le bloque aussi) : il reçoit des données déjà validées et renvoie des données ou lance une `AppError`.
+- Exception : un `schemas.ts` peut importer le `schemas.ts` d'une autre feature (ce sont de simples contrats de types, ex. `scan` réutilise `participantSummarySchema`).
+- Les types d'entrée/sortie inférés de Zod se nomment `CreateEventInput` (entrée) et `EventDto` (sortie API), pour ne pas les confondre avec les types de lignes DB (`Event`, de `db/schema.ts`).
 - Pas de fichier `index.ts` « barrel » : on importe depuis le fichier exact (évite les conflits Git et les cycles).
 
 ## 2. Où va la logique métier ?
@@ -147,17 +149,20 @@ export const GET = defineRoute<{ id: string }>(["admin", "agent"], async ({ para
 
 ## 4. `src/lib` — transverse
 
-| Fichier / dossier      | Rôle                                                              |
-| ---------------------- | ----------------------------------------------------------------- |
-| `env.ts`               | Variables d'environnement validées par Zod (`import { env }`)     |
-| `errors.ts`            | `AppError` et sous-classes, codes d'erreur                        |
-| `permissions.ts`       | `ROLES`, `Role`, `assertRole`                                     |
-| `pagination.ts`        | Schéma de pagination, `buildMeta`, `toLimitOffset`                |
-| `api/response.ts`      | `ok`, `created`, `paginated`, `noContent`, types `ApiResponse<T>` |
-| `api/parse.ts`         | `parseBody`, `parseQuery`, `parseParams`                          |
-| `api/define-route.ts`  | `defineRoute`, `definePublicRoute`                                |
-| `auth/session.ts`      | `getCurrentUser()` — **mock en attendant l'étape 5**              |
-| `storage/` _(étape 5)_ | Abstraction de stockage de fichiers (Vercel Blob)                 |
+| Fichier / dossier          | Rôle                                                               |
+| -------------------------- | ------------------------------------------------------------------ |
+| `env.ts`                   | Variables d'environnement validées par Zod (`import { env }`)      |
+| `errors.ts`                | `AppError` et sous-classes, codes d'erreur                         |
+| `permissions.ts`           | `ROLES`, `Role`, `assertRole`                                      |
+| `pagination.ts`            | Schéma de pagination, `buildMeta`, `toLimitOffset`                 |
+| `api/response.ts`          | `ok`, `created`, `paginated`, `noContent`, types `ApiResponse<T>`  |
+| `api/parse.ts`             | `parseBody`, `parseQuery`, `parseParams`                           |
+| `api/define-route.ts`      | `defineRoute`, `definePublicRoute`                                 |
+| `schemas.ts`               | Briques Zod communes (id, date, email, fichier, `atLeastOneField`) |
+| `constants.ts`             | Types de sessions de scan (sans import, partagé DB + front)        |
+| `mock.ts`, `mock-files.ts` | Outils des stubs d'API — à supprimer à la fin                      |
+| `auth/session.ts`          | `getCurrentUser()` — **mock en attendant l'étape 5**               |
+| `storage/` _(étape 5)_     | Abstraction de stockage de fichiers (Vercel Blob)                  |
 
 **Mock d'authentification (jusqu'à l'étape 5)** : en dev, `getCurrentUser()` renvoie un admin. L'en-tête `x-mock-role: agent` simule un agent, `x-mock-role: anonymous` simule une requête non connectée. Cela permet de tester 401/403 sur les stubs.
 
