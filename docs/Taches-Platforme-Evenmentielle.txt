@@ -1,0 +1,55 @@
+﻿LA BASE : 
+
+
+* UI : 5 pages sont indispensables : événements, participants, badges, scan, dashboard 
+* Stack choisi
+* Schéma de BDD 
+* Liste des endpoints (nom, méthode, entrée/sortie) 
+
+
+Phase 1 : Fondations 
+
+
+* * Backend initialisation , BDD et migrations
+* Authentification (login / roles)
+* * Fonction de generation de QR code GenereQR(Token)
+* * Projet frontend initialisé, Template, layout responsive (menu, tableau, formulaire) 
+* Page de login 
+* * Prototype de lecture caméra QR 
+* Phase 2 : Événements et participants 
+
+
+* CRUD événements 
+* CRUD participants (génère le token unique à la création) 
+* Import Excel (parsing, validation, doublons, rapport d’erreurs) 
+* API recherche, filtres, pagination et export 
+* * Page participants (tableau, recherche, filtres, formulaire) 
+* Page événements (liste, formulaire, suppression) 
+* UI d’import Excel et bouton d’export 
+* * CRUD des sessions de scan 
+* Phase 3 : QR codes et badges 
+
+
+* API QR : image par participant,  téléchargement individuel 
+* * Page QR  : boutons de téléchargement QR, options taille (frontend)
+* Page badges : upload du background, aperçu, téléchargement PDF 
+* Phase 4 : Scan 
+
+
+* API de scan : vérification du token, détection des doublons, enregistrement par session 
+* API de l’historique et de la liste scannés / non scannés par session 
+* * Page sessions de scan (créer, choisir la session (frontend)
+* Interface de scan 
+* Page historique et suivi scannés / non scannés 
+
+
+Phase 5 : Dashboard et administration 
+
+
+* API statistiques (inscrits, scannés, taux par événement et par session) 
+* Page dashboard 
+* Page de gestion des comptes (liste, ajout) 
+* Phase 6 : Qualité et livraison 
+
+
+* Test et Déploiement final en production

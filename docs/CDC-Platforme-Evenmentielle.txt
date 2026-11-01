@@ -1,0 +1,37 @@
+﻿Cahier des Charges
+Plateforme de Gestion Événementielle
+1. Présentation du projet
+Développement d'une plateforme web permettant de gérer les participants à des événements, de générer des QR codes et des badges personnalisés, ainsi que de contrôler les accès grâce à différents systèmes de scan.
+2. Fonctionnalités principales
+A. Gestion des événements
+* Création, modification et suppression des événements.
+* Gestion des informations de chaque événement (nom, date, lieu, description).
+* Tableau de bord avec les statistiques de participation.
+B. Gestion des participants
+* Ajout, modification et suppression des participants.
+* Importation des participants via un fichier Excel.
+* Recherche et filtrage des participants.
+* Exportation de la liste des participants.
+C. Génération des QR codes
+* Génération automatique d'un QR code unique pour chaque participant.
+* Personnalisation des QR codes.
+* Téléchargement des QR codes individuellement ou en masse.
+D. Création de badges personnalisés
+* Génération automatique de badges pour les participants.
+* Importation d'un arrière-plan personnalisé (background).
+* Affichage du nom, des informations du participant et de son QR code.
+* Téléchargement et impression des badges au format PDF.
+E. Gestion des scans QR codes
+* Création de plusieurs sessions de scan indépendantes selon les besoins de l'événement (entrée, repas, ateliers, accès VIP, etc.).
+* Chaque session possède son propre historique de scans.
+* Scan des QR codes via la caméra d'un smartphone ou d'un ordinateur.
+* Vérification automatique de la validité du QR code.
+* Détection des scans déjà effectués pour éviter les doublons.
+* Suivi des participants scannés et non scannés pour chaque session.
+3. Administration
+* Interface d'administration simple et intuitive.
+* Gestion centralisée des événements, participants et sessions de scan.
+* Consultation des statistiques en temps réel.
+* Gestion des comptes administrateurs et agents de scan.
+4. Livrable
+Une plateforme web responsive, accessible sur ordinateur, tablette et smartphone, comprenant l'ensemble des fonctionnalités mentionnées ci-dessus.
