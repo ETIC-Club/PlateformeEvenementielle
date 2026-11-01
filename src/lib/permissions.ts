@@ -1,8 +1,7 @@
 import { ForbiddenError } from "@/lib/errors";
+import { ROLES, type Role } from "@/lib/roles";
 
-/** Rôles de l'application. Source unique : le schéma DB (enum) et Zod en dérivent. */
-export const ROLES = ["admin", "agent"] as const;
-export type Role = (typeof ROLES)[number];
+export { ROLES, type Role };
 
 export const ROLE_LABELS: Record<Role, string> = {
   admin: "Administrateur",
