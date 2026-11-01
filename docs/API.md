@@ -4,15 +4,15 @@ Référence unique pour le front et le back. Les conventions générales (envelo
 
 ## Comment utiliser les stubs
 
-Tous les endpoints existent déjà et **répondent avec des données factices correctement typées**. Le front peut donc démarrer tout de suite. Chaque stub porte un `// TODO(<feature>): implémenter` à l'endroit où brancher le vrai service.
+Tous les endpoints existent déjà et **répondent avec des données factices correctement typées** (sauf `/api/auth/*` et `/api/health`, qui sont réels). Il faut être **connecté** : dans le navigateur, via la page `/login` ; avec `curl`, `curl -c jar.txt -H 'content-type: application/json' -d '{"username":"admin","password":"…"}' …/api/auth/login` puis `-b jar.txt` sur les appels suivants. Le front peut donc démarrer tout de suite. Chaque stub porte un `// TODO(<feature>): implémenter` à l'endroit où brancher le vrai service.
 
 | Pour tester…                           | Faire                                                                          |
 | -------------------------------------- | ------------------------------------------------------------------------------ |
-| Un autre rôle                          | En-tête `x-mock-role: agent` (défaut : admin)                                  |
-| Un utilisateur non connecté (401)      | En-tête `x-mock-role: anonymous`                                               |
+| Un autre rôle                          | Se connecter avec l'autre compte du seed (`admin` ou `agent`)                  |
+| Un utilisateur non connecté (401)      | Appeler sans cookie de session (ou après déconnexion)                          |
 | Un 404 sur `/…/:id`                    | Utiliser l'id `00000000-0000-4000-8000-000000000404`                           |
 | Un 400 de validation                   | Envoyer une entrée invalide : `details.fieldErrors` indique les champs fautifs |
-| Un 401 au login                        | Mot de passe `wrong`                                                           |
+| Un 401 au login                        | Un mauvais mot de passe (l'authentification est réelle depuis l'étape 5)       |
 | Un scan « déjà scanné » / « invalide » | Token `already-scanned` / token commençant par `invalid`                       |
 
 Les stubs ne changent aucun état : un `POST` renvoie un objet fabriqué, un `GET` renvoie toujours les mêmes données. Quand vous implémentez une feature : remplacez le corps du handler par un appel à `service.ts`, supprimez ses imports `mocks` / `lib/mock` et le fichier `features/<feature>/mocks.ts` quand plus rien ne l'utilise.
@@ -75,7 +75,7 @@ Les stubs ne changent aucun état : un `POST` renvoie un objet fabriqué, un `GE
 
 ## Authentification
 
-Schémas : `features/users/schemas.ts`. Session par cookie `HttpOnly` posé par `/login`. Better Auth sera monté sur un chemin interne séparé (`/api/better-auth/*`) pour ne pas entrer en conflit avec ces routes ; **le front n'appelle que les routes ci-dessous**.
+Schémas : `features/users/schemas.ts`. Session par cookie `HttpOnly` posé par `/login`. Better Auth est utilisé **en interne** (`src/lib/auth/auth.ts`) et n'est pas exposé en HTTP : **le front n'appelle que les routes ci-dessous**.
 
 ### `POST /api/auth/login` — public
 

@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // `cacheComponents` (cache partiel) est volontairement désactivé : rendu dynamique classique,
+  // plus simple pour toute l'équipe (cookies()/headers() utilisables sans <Suspense>).
   turbopack: {
     rules: {
       "*.css": {

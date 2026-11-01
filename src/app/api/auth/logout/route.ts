@@ -1,8 +1,11 @@
+import { headers } from "next/headers";
+
 import { defineRoute } from "@/lib/api/define-route";
 import { noContent } from "@/lib/api/response";
+import { auth } from "@/lib/auth/auth";
 
-/** Déconnexion : supprime la session. Rôles : admin, agent. */
+/** Déconnexion : supprime la session et le cookie. Rôles : admin, agent. */
 export const POST = defineRoute(["admin", "agent"], async () => {
-  // TODO(auth): implémenter — invalider la session Better Auth et effacer le cookie.
+  await auth.api.signOut({ headers: await headers() });
   return noContent();
 });
