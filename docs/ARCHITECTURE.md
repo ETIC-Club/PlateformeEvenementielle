@@ -149,24 +149,24 @@ export const GET = defineRoute<{ id: string }>(["admin", "agent"], async ({ para
 
 ## 4. `src/lib` — transverse
 
-| Fichier / dossier          | Rôle                                                                          |
-| -------------------------- | ----------------------------------------------------------------------------- |
-| `env.ts`                   | Variables d'environnement validées par Zod (`import { env }`)                 |
-| `errors.ts`                | `AppError` et sous-classes, codes d'erreur                                    |
-| `permissions.ts`           | `ROLES`, `Role`, `assertRole`                                                 |
-| `pagination.ts`            | Schéma de pagination, `buildMeta`, `toLimitOffset`                            |
-| `api/response.ts`          | `ok`, `created`, `paginated`, `noContent`, types `ApiResponse<T>`             |
-| `api/parse.ts`             | `parseBody`, `parseQuery`, `parseParams`                                      |
-| `api/define-route.ts`      | `defineRoute`, `definePublicRoute`                                            |
-| `schemas.ts`               | Briques Zod communes (id, date, email, fichier, `atLeastOneField`)            |
-| `constants.ts`             | Types de sessions de scan (sans import, partagé DB + front)                   |
-| `mock.ts`, `mock-files.ts` | Outils des stubs d'API — à supprimer à la fin                                 |
-| `auth/auth.ts`             | Config Better Auth (serveur uniquement, non exposée en HTTP)                  |
-| `auth/session.ts`          | `getCurrentUser()` : utilisateur de la session, ou `null`                     |
-| `auth/page-guard.ts`       | `requirePageUser(roles?)` pour pages et layouts                               |
-| `routes.ts`                | Accès aux pages par rôle, page d'accueil de chaque rôle                       |
-| `api-client.ts`            | Client HTTP du front : `api.get/getPage/post/patch/delete/upload`, `ApiError` |
-| `storage/` _(étape 5)_     | Abstraction de stockage de fichiers (Vercel Blob)                             |
+| Fichier / dossier          | Rôle                                                                     |
+| -------------------------- | ------------------------------------------------------------------------ |
+| `env.ts`                   | Variables d'environnement validées par Zod (`import { env }`)            |
+| `errors.ts`                | `AppError` et sous-classes, codes d'erreur                               |
+| `permissions.ts`           | `ROLES`, `Role`, `assertRole`                                            |
+| `pagination.ts`            | Schéma de pagination, `buildMeta`, `toLimitOffset`                       |
+| `api/response.ts`          | `ok`, `created`, `paginated`, `noContent`, types `ApiResponse<T>`        |
+| `api/parse.ts`             | `parseBody`, `parseQuery`, `parseParams`                                 |
+| `api/define-route.ts`      | `defineRoute`, `definePublicRoute`                                       |
+| `schemas.ts`               | Briques Zod communes (id, date, email, fichier, `atLeastOneField`)       |
+| `constants.ts`             | Types de sessions de scan (sans import, partagé DB + front)              |
+| `mock.ts`, `mock-files.ts` | Outils des stubs d'API — à supprimer à la fin                            |
+| `auth/auth.ts`             | Config Better Auth (serveur uniquement, non exposée en HTTP)             |
+| `auth/session.ts`          | `getCurrentUser()` : utilisateur de la session, ou `null`                |
+| `auth/page-guard.ts`       | `requirePageUser(roles?)` pour pages et layouts                          |
+| `routes.ts`                | Accès aux pages par rôle, page d'accueil de chaque rôle                  |
+| `api-client.ts`            | _(vide, à écrire par l'équipe front)_ client HTTP du front pour `/api/*` |
+| `storage/` _(étape 5)_     | Abstraction de stockage de fichiers (Vercel Blob)                        |
 
 **Authentification** : Better Auth (identifiant / mot de passe, sessions en cookie `HttpOnly`, rôle lu dans un cookie signé de 5 min). Utilisateur courant : `getCurrentUser()` (`lib/auth/session.ts`). Les comptes de dev viennent de `pnpm db:seed`.
 
@@ -193,11 +193,13 @@ Langue : **code, tables et URLs en anglais ; textes affichés à l'utilisateur e
 - **Commentaires de travail** : `// TODO(<feature>): …` pour ce qui reste à faire, traçable par `grep`.
 - **Migrations** : générées par `pnpm db:generate` et committées. Ne jamais modifier une migration déjà mergée ; en créer une nouvelle. Le schéma (`src/db/schema.ts`) est un fichier sensible : toute modification passe par le project lead.
 
-## 7. Front : pages, composants, formulaires
+## 7. Front : structure préparée, à implémenter par l'équipe front
 
-- **Pages minces** : `src/app/(app)/<page>/page.tsx` ne contient qu'un import vers `features/<x>/components/<x>-view.tsx`. **Tout le contenu d'une page vit dans sa feature** : on ne touche pas aux fichiers `page.tsx`.
-- **Groupes de routes** : `(app)` = pages connectées (menu latéral, tiroir sur mobile) ; `(app)/(admin)` = pages réservées aux admins (participants, badges, dashboard, users). `events` et `scan` sont ouvertes aux agents. `/login` est publique.
-- **Composants partagés** (`src/components/`) : `ui/` = shadcn/ui (ajouter avec `pnpm dlx shadcn@latest add <composant>`), `common/` = `DataTable` (tableau paginé), `LoadingState` / `ErrorState` / `EmptyState`, `PageHeader` ; `form/` = `useZodForm`, `Form`, `TextField` ; `layout/` = menu latéral.
-- **Données** : TanStack Query + `api` de `lib/api-client.ts` (voir l'exemple en commentaire de `data-table.tsx`). Temps réel = `refetchInterval`.
-- **Formulaires** : toujours `useZodForm(schema)` avec le schéma Zod de la feature (le même que l'API) ; les erreurs 400 du serveur sont affichées sous les bons champs.
+Le backend (auth, protection des pages, API) est en place ; **l'interface n'est volontairement pas faite** : les fichiers ci-dessous existent mais sont vides (commentaire `// TODO(ui|<feature>): implémenter`).
+
+- **Pages minces** : `src/app/(app)/<page>/page.tsx` ne contient qu'un import vers `features/<x>/components/<x>-view.tsx`. **Tout le contenu d'une page vit dans sa feature** : on ne touche pas aux `page.tsx`. Les vues (`events-view`, `participants-view`, `badges-view`, `scan-view`, `dashboard-view`, `users-view`) et `login-form` renvoient `null` en attendant.
+- **Groupes de routes** : `(app)` = pages connectées (le layout exige une session) ; `(app)/(admin)` = pages réservées aux admins (participants, badges, dashboard, users). `events` et `scan` sont ouvertes aux agents. `/login` est publique. Le layout `(app)/layout.tsx` attend la coque de l'application (menu latéral).
+- **Fichiers partagés à écrire** (vides pour l'instant) : `components/layout/app-sidebar.tsx`, `components/common/{data-table,state-views,page-header}.tsx`, `components/form/{form,text-field}.tsx`, `components/providers.tsx`, `lib/api-client.ts`. Chaque fichier décrit en commentaire ce qu'il doit contenir.
+- **Stack front décidée** : Tailwind + shadcn/ui (`pnpm dlx shadcn@latest init`), TanStack Query pour les données et le polling (`refetchInterval`), react-hook-form + `@hookform/resolvers` avec les schémas Zod des features (les mêmes que l'API). Ces paquets ne sont **pas encore installés** : la personne en charge de la tâche « projet frontend initialisé » les ajoute.
 - **UI en français**, accessible au clavier, utilisable sur mobile (tester en largeur 375 px).
+- Pour tester les pages sans interface de connexion : `POST /api/auth/login` (cookie de session) puis ouvrir la page.

@@ -8,12 +8,9 @@ import { HOME_BY_ROLE } from "@/lib/routes";
 export const metadata: Metadata = { title: "Connexion" };
 
 export default async function LoginPage() {
+  // Déjà connecté : on renvoie vers la page d'accueil du rôle.
   const user = await getCurrentUser();
   if (user) redirect(HOME_BY_ROLE[user.role]);
 
-  return (
-    <main className="flex min-h-screen items-center justify-center p-4">
-      <LoginForm />
-    </main>
-  );
+  return <LoginForm />;
 }
