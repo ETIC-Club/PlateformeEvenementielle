@@ -7,9 +7,12 @@ Documentation : [`Guide.md`](Guide.md) (conventions) · [`CONTRIBUTING.md`](CONT
 
 ## Prérequis
 
-- **Node.js 20.9 ou plus** (testé avec Node 24)
+- **Git** et un compte GitHub avec accès à l'organisation
+- **Node.js 20.9 ou plus** (LTS 22 ou 24 conseillée)
 - **pnpm** : `npm install -g pnpm`
 - **PostgreSQL 14 ou plus**, accessible en local (voir ci-dessous)
+- **VS Code** (extensions conseillées : ESLint, Prettier, Tailwind CSS IntelliSense) et **Claude Code**
+- Optionnel : un client d'API (Bruno ou Postman), un smartphone pour tester le scan
 
 ## Installation
 

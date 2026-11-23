@@ -4,7 +4,7 @@
 
 ## 1. Le projet en deux lignes
 
-Plateforme web pour le club : gérer des **événements** et leurs **participants** (import Excel), générer des **QR codes** et des **badges PDF**, et **contrôler les accès** par scan caméra dans des **sessions de scan** (entrée, repas, atelier, VIP…) avec détection des doublons et statistiques. Deux rôles : `admin` et `agent` (agent de scan). Cahier des charges : `docs/CDC-Platforme-Evenmentielle.txt` ; tâches : `docs/Taches-Platforme-Evenmentielle.txt`.
+Plateforme web pour le club : gérer des **événements** et leurs **participants** (import Excel), générer des **QR codes** et des **badges PDF**, et **contrôler les accès** par scan caméra dans des **sessions de scan** (entrée, repas, atelier, VIP…) avec détection des doublons et statistiques. Deux rôles : `admin` et `agent` (agent de scan). Cahier des charges : `docs/CDC-Platforme-Evenmentielle.txt` ; liste de tâches d'origine : `docs/Taches-Platforme-Evenmentielle.txt` ; **plan de travail détaillé : `docs/TASKS.md`**.
 
 ## 2. Stack
 
@@ -42,13 +42,15 @@ pnpm db:studio      # interface web pour parcourir la base
 
 Installation complète, variables d'environnement et déploiement : voir `README.md`.
 
+> Si `pnpm typecheck` ou `pnpm build` se plaint de routes qui n'existent plus (après un `git pull` qui déplace des pages), supprimez le dossier `.next` et relancez.
+
 ## 4. Structure du code
 
 ```
 src/
 ├── app/            # Routes Next.js. FINES : elles appellent les features.
 │   ├── api/…       #   route handlers (un dossier par ressource)
-│   ├── (app)/…     #   pages connectées ; (app)/(admin)/… = pages réservées aux admins
+│   ├── (app)/…     #   pages connectées ; (app)/(admin)/… = admins ; /scan = admins et agents
 │   └── login/      #   page publique
 ├── features/<f>/   # events, participants, import-export, qr, badges, scan-sessions, scan, dashboard, users
 │   ├── components/ #   composants React de la feature (les vues de pages vivent ici)
@@ -105,7 +107,7 @@ Fichiers en `kebab-case`, composants en `PascalCase`, fonctions en `camelCase`. 
 
 ### Front
 
-Les pages (`page.tsx`) ne contiennent qu'un import vers la vue de la feature : **on ne les modifie pas**, on travaille dans `features/<f>/components/`. Les formulaires utilisent le **même schéma Zod** que l'API. Le temps réel se fait par **polling** (pas de WebSocket). Détails : `docs/ARCHITECTURE.md` §7.
+Les pages (`page.tsx`) ne contiennent qu'un import vers la vue de la feature : **on ne les modifie pas**, on travaille dans `features/<f>/components/`. Les formulaires utilisent le **même schéma Zod** que l'API. Le temps réel se fait par **polling** (pas de WebSocket). Le site est **centré sur l'événement** (`/events/[id]` avec onglets Participants, Sessions, QR & badges ; `/scan` pour scanner) : plan complet dans `docs/ARCHITECTURE.md` §7.
 
 ## 6. Règles à respecter (humains et Claude Code)
 

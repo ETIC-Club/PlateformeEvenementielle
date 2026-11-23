@@ -197,9 +197,28 @@ Langue : **code, tables et URLs en anglais ; textes affichés à l'utilisateur e
 
 Le backend (auth, protection des pages, API) est en place ; **l'interface n'est volontairement pas faite** : les fichiers ci-dessous existent mais sont vides (commentaire `// TODO(ui|<feature>): implémenter`).
 
-- **Pages minces** : `src/app/(app)/<page>/page.tsx` ne contient qu'un import vers `features/<x>/components/<x>-view.tsx`. **Tout le contenu d'une page vit dans sa feature** : on ne touche pas aux `page.tsx`. Les vues (`events-view`, `participants-view`, `badges-view`, `scan-view`, `dashboard-view`, `users-view`) et `login-form` renvoient `null` en attendant.
-- **Groupes de routes** : `(app)` = pages connectées (le layout exige une session) ; `(app)/(admin)` = pages réservées aux admins (participants, badges, dashboard, users). `events` et `scan` sont ouvertes aux agents. `/login` est publique. Le layout `(app)/layout.tsx` attend la coque de l'application (menu latéral).
+### Plan du site (centré sur l'événement)
+
+```
+/login                                     public
+/dashboard                                 admin   vue d'ensemble de tous les événements (GET /api/stats/overview)
+/events                                    admin   liste, création, suppression
+/events/[id]                               admin   page d'un événement — onglets :
+   ├─ (Aperçu)      /events/[id]                statistiques de l'événement, modification
+   ├─ Participants  /events/[id]/participants   tableau, recherche, import / export
+   ├─ Sessions      /events/[id]/sessions       créer / gérer les sessions de scan (entrée, repas, atelier…)
+   └─ QR & badges   /events/[id]/badges         QR, fond de badge, PDF
+/scan                                      admin, agent   choisir l'événement puis une session active
+/scan/[sessionId]                          admin, agent   écran de scan + historique + scannés / non scannés
+/users                                     admin   comptes
+```
+
+- **Menu** : admin = Tableau de bord, Événements, Scan, Comptes ; agent = Scan uniquement. Les droits viennent de `PAGE_ACCESS` (`src/lib/routes.ts`) ; tout ce qui est sous `/events` est réservé aux admins.
+- **Créer / gérer** une session de scan : onglet « Sessions » de l'événement (admin). **Scanner** : `/scan` (un agent n'a pas à naviguer dans l'administration) ; un bouton « Scanner » de l'onglet Sessions mène au même écran `/scan/[sessionId]`.
+- **Pages minces** : chaque `page.tsx` (et le `layout.tsx` de `/events/[id]`) ne contient qu'un import vers une vue de `features/<x>/components/`. **Tout le contenu vit dans la feature** : on ne touche pas aux `page.tsx`. Les vues (`events-view`, `event-shell`, `event-overview-view`, `participants-view`, `sessions-view`, `badges-view`, `scan-view`, `scan-session-view`, `dashboard-view`, `users-view`) et `login-form` renvoient `null` en attendant.
+- **Cadre des onglets** (`features/events/components/event-shell.tsx`) : fichier partagé à livrer **en premier** ; les onglets Participants, Sessions et QR & badges en dépendent.
+- **Groupes de routes** : `(app)` = pages connectées (le layout exige une session) ; `(app)/(admin)` = pages réservées aux admins ; `/scan` est dans `(app)` seul. Le layout `(app)/layout.tsx` attend la coque de l'application (menu latéral).
 - **Fichiers partagés à écrire** (vides pour l'instant) : `components/layout/app-sidebar.tsx`, `components/common/{data-table,state-views,page-header}.tsx`, `components/form/{form,text-field}.tsx`, `components/providers.tsx`, `lib/api-client.ts`. Chaque fichier décrit en commentaire ce qu'il doit contenir.
-- **Stack front décidée** : Tailwind + shadcn/ui (`pnpm dlx shadcn@latest init`), TanStack Query pour les données et le polling (`refetchInterval`), react-hook-form + `@hookform/resolvers` avec les schémas Zod des features (les mêmes que l'API). Ces paquets ne sont **pas encore installés** : la personne en charge de la tâche « projet frontend initialisé » les ajoute.
+- **Stack front décidée** : Tailwind + shadcn/ui (`pnpm dlx shadcn@latest init`), TanStack Query pour les données et le polling (`refetchInterval`), react-hook-form + `@hookform/resolvers` avec les schémas Zod des features (les mêmes que l'API). Ces paquets ne sont **pas encore installés** : la personne en charge de la tâche T1 (voir `docs/TASKS.md`) les ajoute.
 - **UI en français**, accessible au clavier, utilisable sur mobile (tester en largeur 375 px).
 - Pour tester les pages sans interface de connexion : `POST /api/auth/login` (cookie de session) puis ouvrir la page.
