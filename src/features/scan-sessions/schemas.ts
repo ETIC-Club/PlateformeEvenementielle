@@ -8,14 +8,19 @@ import { atLeastOneField, dateTimeSchema, idParamsSchema, idSchema } from "@/lib
 /** Pour `/api/scan-sessions/:id`. */
 export const scanSessionIdParamsSchema = idParamsSchema;
 
+const nameSchema = z.string().trim().min(1, "Le nom est requis").max(100);
+const typeSchema = z.enum(SCAN_SESSION_TYPES);
+
 export const createScanSessionSchema = z.object({
-  name: z.string().trim().min(1, "Le nom est requis").max(100),
-  type: z.enum(SCAN_SESSION_TYPES).default("other"),
+  name: nameSchema,
+  type: typeSchema.default("other"),
 });
 export type CreateScanSessionInput = z.infer<typeof createScanSessionSchema>;
 
+// Sans `.default()` : Zod 4 appliquerait la valeur par défaut même à un champ omis du PATCH,
+// ce qui remettrait le type à "other" à chaque modification.
 export const updateScanSessionSchema = atLeastOneField(
-  createScanSessionSchema.extend({ isActive: z.boolean() }).partial(),
+  z.object({ name: nameSchema, type: typeSchema, isActive: z.boolean() }).partial(),
 );
 export type UpdateScanSessionInput = z.infer<typeof updateScanSessionSchema>;
 
