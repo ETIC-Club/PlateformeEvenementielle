@@ -32,6 +32,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Toutes les pages sauf : API, login, fichiers statiques de Next.
-  matcher: ["/((?!api|login|_next/static|_next/image|favicon.ico|.*\..*).*)"],
+  // Toutes les pages sauf : API, login, fichiers statiques de Next et fichiers avec extension.
+  // `\\.` (double) est voulu : dans une chaîne JS, `\.` se réduit à `.`, qui accepte n'importe quel caractère.
+  matcher: ["/((?!api|login|_next/static|_next/image|favicon\\.ico|.*\\..*).*)"],
 };
